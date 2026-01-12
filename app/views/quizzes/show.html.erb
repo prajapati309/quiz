@@ -1,0 +1,28 @@
+<h1 class="text-2xl font-bold mb-4"><%= @quiz.title %></h1>
+
+<% if params[:submission_id] %>
+  <% submission = @quiz.submissions.find(params[:submission_id]) %>
+  <p class="text-lg font-semibold">
+    Score: <%= submission.score %> / <%= submission.total %>
+  </p>
+<% else %>
+  <%= form_with url: submit_quiz_path(@quiz), method: :post do %>
+    <% @quiz.questions.each do |q| %>
+      <div class="mb-4">
+        <p class="font-medium"><%= q.text %></p>
+
+        <% if q.question_type == 'mcq' %>
+          <% q.options.each do |opt| %>
+            <label class="block">
+              <%= radio_button_tag "answers[#{q.id}]", opt %> <%= opt %>
+            </label>
+          <% end %>
+        <% else %>
+          <%= text_field_tag "answers[#{q.id}]", nil, class: "border p-2 w-full" %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%= submit_tag "Submit Quiz", class: "bg-blue-600 text-white px-4 py-2" %>
+  <% end %>
+<% end %>
